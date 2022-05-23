@@ -1,0 +1,34 @@
+.nav {
+    grid-area: n;
+    background: burlywood;
+    min-width: 100px;
+}
+.item{
+    color: white;
+    text-decoration: none;
+}
+.item .active{
+    color: red;
+    text-decoration: none;
+}
+.item:hover{
+    color: grey;
+    animation: chooseNavBar 1s ease;
+    animation-fill-mode: forwards;
+}
+.avaImage{
+    width: 30px;
+    height: 30px;
+    border-radius: 30px;
+    margin-left: 5px;
+    margin-right: 5px;
+    overflow: hidden;
+}
+.bestFriend_wrapper{
+    display: flex;
+    justify-content: space-between;
+}
+@keyframes chooseNavBar {
+    0%{padding: 0}
+    100%{padding-left: 8px}
+}

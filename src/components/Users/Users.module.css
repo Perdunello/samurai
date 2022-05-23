@@ -1,0 +1,30 @@
+.ava {
+    width: 100px;
+    height: 100px;
+}
+
+.usersWrapper {
+    display: grid;
+    grid-template-columns: 1fr 6fr;
+}
+
+.avaWrapper {
+margin-top: 10px;
+    padding: 10px;
+}
+
+.infoWrapper {
+    margin-top: 10px;
+    padding: 10px;
+    align-items: center;
+    border-radius: 40px;
+    width: 500px;
+    height: 100px;
+    display: flex;
+    justify-content: space-between;
+    background: white;
+    border: 2px solid black;
+}
+.activePage{
+    font-weight: bold;
+}
