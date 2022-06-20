@@ -5,6 +5,8 @@ import Preloader from "../common/Preloader/Preloader";
 import {NavLink} from "react-router-dom";
 
 let Users = (props) => {
+    let a = String('awdawd')
+    console.log(a)
     return <div>
         {props.isFetching === true ? <Preloader/> : null}
         {props.showPagination()}

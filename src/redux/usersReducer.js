@@ -107,12 +107,11 @@ export const requestUsers = (currentPageNumber, pageCount) => {
 export const follow = (userId) => {
     return (dispatch) => {
         dispatch(toggleIsFollowing(true, userId))
-        API.follow(userId)
-            .then(data => {
-                if (data.resultCode === 0)
-                    dispatch(followSuccess(userId))
-                dispatch(toggleIsFollowing(false, userId))
-            })
+        API.follow(userId).then(data => {
+            if (data.resultCode === 0)
+                dispatch(followSuccess(userId))
+            dispatch(toggleIsFollowing(false, userId))
+        })
     }
 }
 export const unfollow = (userId) => {
