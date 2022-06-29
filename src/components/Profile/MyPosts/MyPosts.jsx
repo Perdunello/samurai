@@ -2,22 +2,11 @@ import c from './MyPosts.module.scss';
 import Post from "./Post/Post";
 import React from "react";
 import NewProfilePostForm from './NewProfilePostForm'
-import {useDispatch, useSelector} from "react-redux";
-import {addPost, updateNewPostText} from "../../../redux/profileReducer";
+import {useSelector} from "react-redux";
 
 
 const MyPosts = () => {
     const profilePage = useSelector(state => state.profilePage)
-    const dispatch = useDispatch()
-
-    let addPostOnPage = () => {
-        dispatch(addPost())
-    }
-
-    let onChangePost = (e) => {
-        let text = e.target.value
-        dispatch(updateNewPostText(text))
-    }
 
     const PostElements = () => {
         return <div>
@@ -31,9 +20,7 @@ const MyPosts = () => {
         <div className={c.postsBlock}>
             <h3>MY POSTS</h3>
             <div>
-                <NewProfilePostForm onChangePost={onChangePost}
-                                    newPostText={profilePage.newPostText}
-                                    onSubmit={addPostOnPage}/>
+                <NewProfilePostForm/>
             </div>
             <div className={c.posts}>
                 <PostElements/>

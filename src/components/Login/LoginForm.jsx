@@ -1,25 +1,35 @@
-import {Field, reduxForm} from "redux-form";
-import validators from "../../utils/validators/validators";
-import {Input} from "../common/FormsControls/FormsControls";
-import c from './Login.module.scss'
+// import c from './Login.module.scss'
+import {useForm} from 'react-hook-form'
+import {useDispatch} from "react-redux";
+import {loginRequest} from "../../redux/headerReducer";
 
-const maxLength30 = validators.maxlenght(30)
-const LoginForm = (props) => {
-    return <form onSubmit={props.handleSubmit}>
-        <div>
-            <Field validate={[validators.required, maxLength30]} component={Input} name={'email'}
-                   placeholder={'login'} type={'text'}/>
-        </div>
-        <div>
-            <Field validate={[validators.required, maxLength30]} component={Input} name={'password'}
-                   placeholder={'password'} type={'password'}/>
-        </div>
-        <div>
-            <Field component={Input} type={'checkbox'} name={'rememberMe'}/>remember me?
-        </div>
-        {props.error && <div className={c.error}>{props.error}</div>}
-        <button>Login</button>
-    </form>
+const LoginForm = () => {
+    const {register, handleSubmit, formState: {errors}} = useForm({mode: 'onChange'});
+    const dispatch = useDispatch()
+    const onSubmit = (values) => {
+        dispatch(loginRequest(values))
+    }
+    return <div>
+        <form onSubmit={handleSubmit(onSubmit)}>
+            <div>
+                <input placeholder={'login'} type="text" {...register('email', {
+                    required: 'Field name is required',
+                    minLength: {value: 5, message: ' Minimal length is 5 symbols'}
+                })}/>
+                <div>{errors.email && errors.email.message}</div>
+            </div>
+            <div>
+                <input placeholder={'password'} type="password" {...register('password', {
+                    required: 'Field password is required',
+                    maxLength: {value: 40, message: 'Maximal length is 40 symbols'}
+                })}/>
+                <div>{errors.password && errors.password.message}</div>
+            </div>
+            <div>
+                <input type="checkbox" {...register('rememberMe')}/> Remember me?
+            </div>
+            <input type="submit"/>
+        </form>
+    </div>
 }
-
-export default reduxForm({form: 'login'})(LoginForm)
+export default LoginForm

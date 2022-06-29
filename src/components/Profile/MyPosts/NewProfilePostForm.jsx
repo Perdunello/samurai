@@ -1,20 +1,27 @@
 import React from "react";
-import {Field, reduxForm} from "redux-form";
-import {Input} from "../../common/FormsControls/FormsControls";
-import validators from "../../../utils/validators/validators";
+import {useForm} from "react-hook-form";
+import {addPost, updateNewPostText} from "../../../redux/profileReducer";
+import {useDispatch, useSelector} from "react-redux";
 
-const maxLenght10 = validators.maxlenght(10)
-const NewProfilePostForm = (props) => {
+const NewProfilePostForm = () => {
+    const {register, handleSubmit, formState: {errors}} = useForm()
+    const newPostText = useSelector(state => state.profilePage.newPostText)
+    const dispatch = useDispatch()
+    let onChangePost = (e) => {
+        let text = e.target.value
+        dispatch(updateNewPostText(text))
+    }
+    let addPostOnPage = () => {
+        dispatch(addPost())
+    }
     return (
-        <form onSubmit={props.handleSubmit}>
+        <form onSubmit={handleSubmit(addPostOnPage)}>
             <div>
-                <Field validate={[validators.required, maxLenght10]}
-                       component={Input}
-                       name='post'
-                       onChange={props.onChangePost}
-                       value={props.newPostText}
-                       type={'text'}
-                       placeholder='Post message'/>
+                <input type="text"
+                       placeholder='Post message' {...register('post', {required: 'This field is required'})}
+                       onChange={onChangePost}
+                       value={newPostText}/>
+                <div>{errors.post && errors.post.message}</div>
             </div>
             <div>
                 <button>Add post</button>
@@ -22,4 +29,4 @@ const NewProfilePostForm = (props) => {
         </form>
     )
 }
-export default reduxForm({form: 'NewProfilePost'})(NewProfilePostForm)
+export default NewProfilePostForm

@@ -6,7 +6,6 @@ import usersReducer, {usersWatcher} from "./usersReducer";
 import headerReducer, {headerWatcher} from "./headerReducer";
 import createSagaMiddleware from 'redux-saga'
 import {all} from 'redux-saga/effects'
-import {reducer as formReducer} from "redux-form";
 import appReducer, {appWatcher} from "./appReducer";
 
 let reducers = combineReducers({
@@ -15,7 +14,6 @@ let reducers = combineReducers({
     sidebar: sidebarReducer,
     usersPage: usersReducer,
     auth: headerReducer,
-    form: formReducer,
     app: appReducer,
 })
 const sagaMiddleWare = createSagaMiddleware()
@@ -26,5 +24,6 @@ function* allWatchers() {
 }
 
 sagaMiddleWare.run(allWatchers)
+
 window.store = store
 export default store

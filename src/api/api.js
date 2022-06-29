@@ -45,7 +45,7 @@ export const API = {
             return responce
         })
     },
-    login(email, password, rememberMe) {
+    login({email,password,rememberMe}) {
         return instance.post(`auth/login`, {
             email: email,
             password: password,

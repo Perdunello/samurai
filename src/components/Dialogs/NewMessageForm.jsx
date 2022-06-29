@@ -1,27 +1,36 @@
 import React from "react";
-import {Field, reduxForm} from "redux-form";
-import validators from "../../utils/validators/validators";
-import {Input} from "../common/FormsControls/FormsControls";
+import {useForm} from "react-hook-form";
+import {sendMessage, updateNewMessageText} from "../../redux/dialogsReducer";
+import {useDispatch, useSelector} from "react-redux";
 
-const maxLength100 = validators.maxlenght(10)
-const NewMessageForm = (props) => {
+const NewMessageForm = () => {
+    const {register, handleSubmit, formState: {errors}} = useForm({mode: 'onChange'});
+    const newMessageText = useSelector(state => state.dialogsPage.newMessageText)
+    const dispatch = useDispatch()
+
+    let onChangeDialogMessage = (e) => {
+        let textMessage = e.target.value
+        dispatch(updateNewMessageText(textMessage))
+    }
+    const sendDialogMessage = () => {
+        dispatch(sendMessage())
+    }
     return (
-        <form onSubmit={props.handleSubmit}>
+        <form onSubmit={handleSubmit(sendDialogMessage)}>
             <div>
-                <Field validate={[validators.required, maxLength100]}
-                       component={Input}
-                       type='text'
-                       name='message'
-                       onChange={props.onChangeDialogMessage}
-                       value={props.newMessageText}
-                       placeholder='Write message'/>
+                <input type="text" placeholder='Write message' {...register('message', {
+                    required: 'This field is required',
+                    maxLength: {
+                        value: 100,
+                        message: `Max length of message is 100`
+                    }
+                })} onChange={onChangeDialogMessage} value={newMessageText}/>
+                <div>{errors.message && errors.message.message}</div>
             </div>
             <div>
                 <button>Enter</button>
             </div>
         </form>
     )
-
 }
-
-export default reduxForm({form: 'newMessage'})(NewMessageForm)
+export default NewMessageForm

@@ -21,14 +21,6 @@ let appReducer = (state = initialState, action) => {
 const setInitializedSuccess = () => {
     return {type: SET_INITIALIZED_SUCCESS}
 }
-
-// export const initializeApp = () => {
-//     return (dispatch) => {
-//         dispatch(isAuthMe()).then(() => {
-//             dispatch(setInitializedSuccess())
-//         })
-//     }
-// }
 export const initialAppRequest = (payload) => {
     return {type: INITIAL_APP_REQUEST, payload}
 }
