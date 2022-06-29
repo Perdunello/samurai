@@ -1,7 +1,13 @@
-.item{
-    color: red;
+.postsBlock {
+  padding: 10px;
 }
-.item img{
-    width: 50px;
-    border-radius: 30px;
+
+.posts {
+  padding-top: 10px;
 }
+
+.postImg {
+  width: 40px;
+}
+
+/*# sourceMappingURL=Post.module.css.map */

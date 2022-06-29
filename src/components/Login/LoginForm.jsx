@@ -1,7 +1,7 @@
 import {Field, reduxForm} from "redux-form";
 import validators from "../../utils/validators/validators";
 import {Input} from "../common/FormsControls/FormsControls";
-import c from './Login.module.css'
+import c from './Login.module.scss'
 
 const maxLength30 = validators.maxlenght(30)
 const LoginForm = (props) => {

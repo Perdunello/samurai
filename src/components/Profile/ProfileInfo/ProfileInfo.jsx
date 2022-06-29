@@ -1,15 +1,16 @@
-import c from './ProfileInfo.module.css'
+import c from './ProfileInfo.module.scss'
 import userPhoto from '../../../assets/Images/user.png'
 import ProfileStatus from "../ProfileStatus/ProfileStatus";
+import {useSelector} from "react-redux";
 
 const ProfileInfo = (props) => {
+    const status = useSelector(state => state.profilePage.status)
     return (
         <div>
             <div className={c.descriptionBlock}>
                 {props.profile.photos.large ? <img className={c.avaPhoto} src={props.profile.photos.large} alt=""/> :
                     <img className={c.avaPhoto} src={userPhoto} alt=""/>}
-                <ProfileStatus status={props.status} updateStatus={props.updateStatus}/>
-                {/*<div>{props.profile.aboutMe}</div>*/}
+                <ProfileStatus status={status}/>
             </div>
         </div>
     )

@@ -3,19 +3,20 @@
   grid-template-columns: 2fr 10fr;
 }
 
-.dialogItems .active {
-  color: red;
+.dialogItems {
+  .active {
+    color: red;
+  }
 }
 
 .dialog {
   padding: 10px;
-}
-.dialog img {
-  width: 30px;
+
+  img {
+    width: 30px;
+  }
 }
 
 .message {
   padding: 10px;
 }
-
-/*# sourceMappingURL=Dialogs.module.css.map */

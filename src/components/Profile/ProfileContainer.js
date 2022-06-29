@@ -1,67 +1,44 @@
 import Profile from "./Profile";
-import {connect} from "react-redux";
-import React from "react";
-import {getDataUserProfile, requestStatus, updateStatus} from "../../redux/profileReducer";
+import {useDispatch, useSelector} from "react-redux";
+import React, {useEffect} from "react";
+import {
+    getDataUserProfileRequest,
+   statusRequest,
+    // updateStatus
+} from "../../redux/profileReducer";
 import Preloader from "../common/Preloader/Preloader";
 import {Navigate, useMatch} from "react-router-dom";
-import withAuthRedirect from "../../hoc/withAuthRedirect";
-import {compose} from "redux";
-import {getProfile, getStatus} from "../../redux/profileSelectors";
-import {getAuthId} from "../../redux/headerSelectors";
 
-class ProfileContainer extends React.Component {
-    componentDidMount() {
+const ProfileContainer = () => {
+    const profile = useSelector(state => state.profilePage.profile)
+    const authUserId = useSelector(state => state.auth.id)
+    const dispatch = useDispatch()
+    const match = useMatch('/profile/:userId/')
+    useEffect(() => {
         let userId
-        if (!this.props.match) {
-            userId = this.props.authUserId
-            if (!this.props.authUserId) {
+        if (!match) {
+            userId = authUserId
+            if (!userId) {
                 return
                 //добавить редирект на логинизацию(если мы не зарегестрированы, то редирект на логин. Если мы нажимаем на
-                // Юзерс, то профиль отображается и не нужно делать логинизациюц)
+                // Юзерс, то профиль отображается и не нужно делать логинизацию)
             }
         } else {
-            userId = this.props.match.params.userId
+            userId = match.params.userId
         }
-        this.props.getDataUserProfile(userId)
-        this.props.getStatus(userId)
-    }
+        dispatch(getDataUserProfileRequest(userId))
+        // dispatch(requestStatus(userId))
+        dispatch(statusRequest(userId))
+    }, [authUserId,dispatch,match])
 
-    render() {
-        if (!this.props.authUserId && !this.props.match) {//если мы не залогинены и не смотрим чей-то профиль,
-            //то переходим на страницу логинизации
-            return <Navigate to='/login'/>
-        }
-        if (!this.props.profile) {
-            return <Preloader/>
-        }
-        return <Profile profile={this.props.profile} status={this.props.status} updateStatus={this.props.updateStatus}/>
+    if (!authUserId && !match) {//если мы не залогинены и не смотрим чей-то профиль,
+        //то переходим на страницу логинизации
+        return <Navigate to='/login'/>
     }
+    if (!profile) {
+        return <Preloader/>
+    }
+    return <Profile profile={profile}/>
 }
 
-let mapStateToProps = (state) => {
-    return {
-        profile: getProfile(state),
-        status: getStatus(state),
-        authUserId: getAuthId(state)
-    }
-}
-
-let mapDispatchToProps = {
-    getDataUserProfile,
-    updateStatus,
-    getStatus: requestStatus,
-}
-
-const WithUrlDataContainer = (Component) => {
-    const WithUrlData = (props) => {
-        const match = useMatch('/profile/:userId/')
-        return <Component {...props} match={match}/>
-    }
-    return WithUrlData
-}
-
-export default compose(
-    connect(mapStateToProps, mapDispatchToProps),
-    WithUrlDataContainer,
-    // withAuthRedirect
-)(ProfileContainer)
+export default ProfileContainer

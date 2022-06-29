@@ -1,9 +1,13 @@
 import {API} from "../api/api";
+import {takeEvery, call, put} from 'redux-saga/effects'
 
 const ADD_POST = 'ADD-POST'
 const UPDATE_NEW_POST_TEXT = 'UPDATE-NEW-POST-TEXT'
 const SET_USER_PROFILE = 'SET_USER_PROFILE'
 const SET_STATUS = 'SET_STATUS'
+const GET_DATA_USER_PROFILE_REQUEST = 'GET_DATA_USER_PROFILE_REQUEST'
+const STATUS_REQUEST = 'STATUS_REQUEST'
+const UPDATE_STATUS_REQUEST = 'UPDATE_STATUS_REQUEST'
 
 let initialState = {
     postsData: [
@@ -16,7 +20,6 @@ let initialState = {
     profile: null,
     status: '',
 }
-
 let profileReducer = (state = initialState, action) => {
     if (action.type === ADD_POST) {
         let newPost = {
@@ -37,7 +40,7 @@ let profileReducer = (state = initialState, action) => {
     } else if (action.type === SET_USER_PROFILE) {
         return {...state, profile: action.profile}
     } else if (action.type === SET_STATUS) {
-        return  {
+        return {
             ...state,
             status: action.status
         }
@@ -56,29 +59,37 @@ const setUserProfile = (profile) => {
 const setStatus = (status) => {
     return {type: SET_STATUS, status: status}
 }
+export const getDataUserProfileRequest = (payload) => {
+    return {type: GET_DATA_USER_PROFILE_REQUEST, payload}
+}
+export const statusRequest = (payload) => {
+    return {type: STATUS_REQUEST, payload}
+}
+export const updateStatusRequest = (payload) => {
+    return {type: UPDATE_STATUS_REQUEST, payload}
+}
 
-export const getDataUserProfile = (userId) => {
-    return (dispatch) => {
-        API.getDataUserProfile(userId).then(data => {
-            dispatch(setUserProfile(data))
-        })
-    }
+function* getDataUserProfile(action) {
+    const data = yield call(API.getDataUserProfile, action.payload)
+    yield put(setUserProfile(data))
 }
-export const requestStatus = (userId) => {
-    return (dispatch) => {
-        API.getStatus(userId).then(data => {
-            dispatch(setStatus(data))
-        })
-    }
-}
-export const updateStatus = (status) => {
-    return (dispatch) => {
-        API.updateStatus(status).then(responce => {
-            if (responce.data.resultCode === 0) {
-                dispatch(setStatus(status))
-            }
-        })
 
+function* getStatus(action) {
+    const data = yield call(API.getStatus, action.payload)
+    yield put(setStatus(data))
+}
+
+function* updateStatus(action) {
+    const data = yield call(API.updateStatus, action.payload)
+    if (data.data.resultCode === 0) {
+        yield put(setStatus(action.payload))
     }
 }
+
+export function* profileWatcher() {
+    yield takeEvery(GET_DATA_USER_PROFILE_REQUEST, getDataUserProfile)
+    yield takeEvery(STATUS_REQUEST, getStatus)
+    yield takeEvery(UPDATE_STATUS_REQUEST, updateStatus)
+}
+
 export default profileReducer

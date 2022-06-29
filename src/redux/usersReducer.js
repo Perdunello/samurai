@@ -1,12 +1,16 @@
 import {API} from "../api/api";
+import {call, put, takeEvery} from "redux-saga/effects";
 
-let FOLLOW = 'FOLLOW'
-let UNFOLLOW = 'UNFOLLOW'
-let SET_USERS = 'SET_USERS'
-let SET_PAGE_NUMBER = 'SET_PAGE_NUMBER'
-let SET_TOTAL_COUNT_USERS = 'SET_TOTAL_COUNT_USERS'
-let TOGGLE_IS_FETCHING = 'TOGGLE_IS_FETCHING'
-let TOGGLE_IS_FOLLOWING = 'TOGGLE_IS_FOLLOWING'
+const FOLLOW = 'FOLLOW'
+const UNFOLLOW = 'UNFOLLOW'
+const SET_USERS = 'SET_USERS'
+const SET_PAGE_NUMBER = 'SET_PAGE_NUMBER'
+const SET_TOTAL_COUNT_USERS = 'SET_TOTAL_COUNT_USERS'
+const TOGGLE_IS_FETCHING = 'TOGGLE_IS_FETCHING'
+const TOGGLE_IS_FOLLOWING = 'TOGGLE_IS_FOLLOWING'
+const USERS_REQUEST = 'USERS_REQUEST'
+const FOLLOW_REQUEST = 'FOLLOW_REQUEST'
+const UNFOLLOW_REQUEST = 'UNFOLLOW_REQUEST'
 
 let initialState = {
     users: [],
@@ -94,36 +98,80 @@ export const toggleIsFollowing = (isFollowing, userId) => {
     return {type: TOGGLE_IS_FOLLOWING, isFollowing, userId}
 }
 
-export const requestUsers = (currentPageNumber, pageCount) => {
-    return (dispatch) => {
-        dispatch(toggleIsFetching(true))
-        API.getUsers(currentPageNumber, pageCount).then(data => {
-            dispatch(setUsers(data.items))
-            dispatch(setTotalUsersCount(data.totalCount))
-            dispatch(toggleIsFetching(false))
-        })
-    }
-}
-export const follow = (userId) => {
-    return (dispatch) => {
-        dispatch(toggleIsFollowing(true, userId))
-        API.follow(userId).then(data => {
-            if (data.resultCode === 0)
-                dispatch(followSuccess(userId))
-            dispatch(toggleIsFollowing(false, userId))
-        })
-    }
-}
-export const unfollow = (userId) => {
-    return (dispatch) => {
-        dispatch(toggleIsFollowing(true, userId))
-        API.unfollow(userId).then((data) => {
-            if (data.resultCode === 0)
-                dispatch(unfollowSuccess(userId))
-            dispatch(toggleIsFollowing(false, userId))
-        })
-    }
+// export const usersRequest = (currentPageNumber, pageCount) => {
+//     return (dispatch) => {
+//         dispatch(toggleIsFetching(true))
+//         API.getUsers(currentPageNumber, pageCount).then(data => {
+//             dispatch(setUsers(data.items))
+//             dispatch(setTotalUsersCount(data.totalCount))
+//             dispatch(toggleIsFetching(false))
+//         })
+//     }
+// }
+export const usersRequest = (payload) => {
+    return {type: USERS_REQUEST, payload}
 }
 
+function* getUsers(action) {
+    yield put(toggleIsFetching(true))
+    const response = yield call(API.getUsers, action.payload.page, action.payload.pageCount)
+    yield put(setUsers(response.items))
+    yield put(setTotalUsersCount(response.totalCount))
+    yield put(toggleIsFetching(false))
+}
+
+// export const follow = (userId) => {
+//     return (dispatch) => {
+//         dispatch(toggleIsFollowing(true, userId))
+//         API.follow(userId).then(data => {
+//             if (data.resultCode === 0) {
+//                 dispatch(followSuccess(userId))
+//             }
+//             dispatch(toggleIsFollowing(false, userId))
+//         })
+//     }
+// }
+export const followRequest = (payload) => {
+    return {type: FOLLOW_REQUEST, payload}
+}
+
+function* follow({type, payload}) {
+    yield put(toggleIsFollowing(true, payload.userId))
+    const response = yield call(API.follow, payload.userId)
+    if (response.resultCode === 0) {
+        yield put(followSuccess(payload.userId))
+    }
+    yield put(toggleIsFollowing(false, payload.userId))
+}
+
+// export const unfollow = (userId) => {
+//     return (dispatch) => {
+//         dispatch(toggleIsFollowing(true, userId))
+//         API.unfollow(userId).then((data) => {
+//             if (data.resultCode === 0)
+//                 dispatch(unfollowSuccess(userId))
+//             dispatch(toggleIsFollowing(false, userId))
+//         })
+//     }
+// }
+
+export const unfollowRequest = (payload) => {
+    return {type: UNFOLLOW_REQUEST, payload}
+}
+
+function* unfollow({type, payload}) {
+    yield put(toggleIsFollowing(true, payload.userId))
+    const response = yield call(API.unfollow, payload.userId)
+    if (response.resultCode === 0) {
+        yield put(unfollowSuccess(payload.userId))
+    }
+    yield put(toggleIsFollowing(false, payload.userId))
+}
+
+export function* usersWatcher() {
+    yield takeEvery(USERS_REQUEST, getUsers)
+    yield takeEvery(FOLLOW_REQUEST, follow)
+    yield takeEvery(UNFOLLOW_REQUEST, unfollow)
+}
 
 export default usersReducer

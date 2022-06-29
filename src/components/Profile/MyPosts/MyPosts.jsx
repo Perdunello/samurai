@@ -1,21 +1,30 @@
-import c from './MyPosts.module.css';
+import c from './MyPosts.module.scss';
 import Post from "./Post/Post";
 import React from "react";
 import NewProfilePostForm from './NewProfilePostForm'
+import {useDispatch, useSelector} from "react-redux";
+import {addPost, updateNewPostText} from "../../../redux/profileReducer";
 
 
-const MyPosts = (props) => {
-
-    let postElements = props.profilePage.postsData
-        .map((post) => <Post key={post.id + post.message} message={post.message} likesCount={post.likesCount}/>)
+const MyPosts = () => {
+    const profilePage = useSelector(state => state.profilePage)
+    const dispatch = useDispatch()
 
     let addPostOnPage = () => {
-        props.addPost()
+        dispatch(addPost())
     }
 
     let onChangePost = (e) => {
         let text = e.target.value
-        props.updateNewPostText(text)
+        dispatch(updateNewPostText(text))
+    }
+
+    const PostElements = () => {
+        return <div>
+            {profilePage.postsData
+                .map((post) => <Post key={post.id + post.message} message={post.message}
+                                     likesCount={post.likesCount}/>)}
+        </div>
     }
 
     return (
@@ -23,11 +32,11 @@ const MyPosts = (props) => {
             <h3>MY POSTS</h3>
             <div>
                 <NewProfilePostForm onChangePost={onChangePost}
-                                    newPostText={props.profilePage.newPostText}
+                                    newPostText={profilePage.newPostText}
                                     onSubmit={addPostOnPage}/>
             </div>
             <div className={c.posts}>
-                {postElements}
+                <PostElements/>
             </div>
         </div>
     )

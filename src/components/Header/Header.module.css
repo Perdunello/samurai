@@ -1,10 +1,13 @@
 .header {
-    grid-area: h;
-    background: green;
+  grid-area: h;
+  background: green;
 }
-.header img{
-    width: 20px;
+.header img {
+  width: 20px;
 }
-.auth{
-    float:right
+
+.auth {
+  float: right;
 }
+
+/*# sourceMappingURL=Header.module.css.map */

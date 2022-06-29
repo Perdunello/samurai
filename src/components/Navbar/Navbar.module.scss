@@ -7,17 +7,18 @@
 .item {
   color: white;
   text-decoration: none;
-}
-.item .active {
-  color: red;
-  text-decoration: none;
-}
-.item :hover {
-  color: grey;
-  animation: chooseNavBar 1s ease;
-  animation-fill-mode: forwards;
-}
 
+  .active {
+    color: red;
+    text-decoration: none;
+  }
+
+  :hover {
+    color: grey;
+    animation: chooseNavBar 1s ease;
+    animation-fill-mode: forwards;
+  }
+}
 .avaImage {
   width: 30px;
   height: 30px;
@@ -34,11 +35,9 @@
 
 @keyframes chooseNavBar {
   0% {
-    padding: 0;
+    padding: 0
   }
   100% {
-    padding-left: 8px;
+    padding-left: 8px
   }
 }
-
-/*# sourceMappingURL=Navbar.module.css.map */

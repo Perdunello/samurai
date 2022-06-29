@@ -1,9 +1,10 @@
-import c from './Navbar.module.css';
+import {useSelector} from "react-redux";
 import {NavLink} from "react-router-dom";
+import c from "./Navbar.module.css";
 
-const Navbar = (props) => {
-
-    let bestFriendList = props.bestFriends
+let Navbar = () => {
+    const bestFriends = useSelector(state => state.sidebar.bestFriend)
+    let bestFriendList = bestFriends
         .map(friend => (
                 <NavLink key={friend.name + friend.id} to={'/dialogs/' + friend.id}> <img className={c.avaImage}
                                                                                           src={friend.avaUrl}
@@ -41,4 +42,4 @@ const Navbar = (props) => {
         </nav>
     )
 }
-export default Navbar;
+export default Navbar

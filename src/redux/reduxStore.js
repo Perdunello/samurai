@@ -1,12 +1,13 @@
 import {applyMiddleware, combineReducers, createStore} from "redux";
-import profileReducer from "./profileReducer";
+import profileReducer, {profileWatcher} from "./profileReducer";
 import dialogsReducer from "./dialogsReducer";
 import sidebarReducer from "./sidebarReducer";
-import usersReducer from "./usersReducer";
-import headerReducer from "./headerReducer";
-import thunkMiddleWare from 'redux-thunk'
+import usersReducer, {usersWatcher} from "./usersReducer";
+import headerReducer, {headerWatcher} from "./headerReducer";
+import createSagaMiddleware from 'redux-saga'
+import {all} from 'redux-saga/effects'
 import {reducer as formReducer} from "redux-form";
-import appReducer from "./appReducer";
+import appReducer, {appWatcher} from "./appReducer";
 
 let reducers = combineReducers({
     profilePage: profileReducer,
@@ -15,9 +16,15 @@ let reducers = combineReducers({
     usersPage: usersReducer,
     auth: headerReducer,
     form: formReducer,
-    app:appReducer,
+    app: appReducer,
 })
+const sagaMiddleWare = createSagaMiddleware()
+let store = createStore(reducers, applyMiddleware(sagaMiddleWare))
 
-let store = createStore(reducers, applyMiddleware(thunkMiddleWare))
+function* allWatchers() {
+    yield all([profileWatcher(), appWatcher(), headerWatcher(), usersWatcher()])
+}
+
+sagaMiddleWare.run(allWatchers)
 window.store = store
 export default store
